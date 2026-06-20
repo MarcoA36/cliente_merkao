@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
 import * as api from "./api";
-import type { Section } from "./adminTypes";
+import type { Department, PromotionDraft, Section } from "./adminTypes";
 import { AdminLayout } from "./components/AdminLayout";
 import { DashboardSummary } from "./components/DashboardSummary";
 import { LoginScreen } from "./components/LoginScreen";
 import { OperationalRail } from "./components/OperationalRail";
 import { SESSION_KEY, nextStatus } from "./constants";
 import type { Brand, Category, Order, Product, User } from "./types";
+import * as ui from "./uiStyles";
 import { CatalogView } from "./views/CatalogView";
 import { InventoryView } from "./views/InventoryView";
 import { OrdersView } from "./views/OrdersView";
 import { ProductsView } from "./views/ProductsView";
+import { PromotionsView } from "./views/PromotionsView";
 
 export function App() {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [section, setSection] = useState<Section>("products");
+  const [section, setSection] = useState<Section>("orders");
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [promotions, setPromotions] = useState<PromotionDraft[]>([]);
   const [includeArchived, setIncludeArchived] = useState(false);
   const [loading, setLoading] = useState(false);
   const [notice, setNotice] = useState("");
@@ -46,16 +50,20 @@ export function App() {
     setLoading(true);
     setError("");
     try {
-      const [categoryResponse, brandResponse, productResponse, orderResponse] = await Promise.all([
+      const [categoryResponse, brandResponse, productResponse, orderResponse, departmentResponse, promotionResponse] = await Promise.all([
         api.listCategories(nextToken),
         api.listBrands(nextToken),
         api.listProducts(nextToken),
-        api.listOrders(nextToken, includeArchived)
+        api.listOrders(nextToken, includeArchived),
+        api.listDepartments(nextToken),
+        api.listPromotions(nextToken)
       ]);
       setCategories(categoryResponse.categories);
       setBrands(brandResponse.brands);
       setProducts(productResponse.products);
       setOrders(orderResponse.orders);
+      setDepartments(departmentResponse.departments);
+      setPromotions(promotionResponse.promotions);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "No se pudo cargar el CMS.");
     } finally {
@@ -77,6 +85,8 @@ export function App() {
     setCategories([]);
     setBrands([]);
     setOrders([]);
+    setDepartments([]);
+    setPromotions([]);
   }
 
   async function run(action: () => Promise<void>, success: string) {
@@ -108,11 +118,11 @@ export function App() {
     >
       <DashboardSummary products={products} orders={orders} />
 
-      {notice ? <div className="notice success">{notice}</div> : null}
-      {error ? <div className="notice error">{error}</div> : null}
+      {notice ? <div className={ui.cn(ui.pageNotice, ui.noticeSuccess)}>{notice}</div> : null}
+      {error ? <div className={ui.cn(ui.pageNotice, ui.noticeError)}>{error}</div> : null}
 
-      <div className="dashboardGrid">
-        <div className="dashboardPrimary">
+      <div className={ui.dashboardGrid}>
+        <div className={ui.dashboardPrimary}>
           {section === "products" ? (
             <ProductsView
               brands={brands}
@@ -121,6 +131,16 @@ export function App() {
               onCreate={(input) => run(() => api.createProduct(token, input).then(noop), "Producto creado")}
               onUpdate={(id, input) => run(() => api.updateProduct(token, id, input).then(noop), "Producto actualizado")}
               onDelete={(id) => run(() => api.deleteProduct(token, id), "Producto desactivado")}
+            />
+          ) : null}
+
+          {section === "promotions" ? (
+            <PromotionsView
+              products={products}
+              promotions={promotions}
+              onCreate={(input) => run(() => api.createPromotion(token, input).then(noop), "Promocion creada")}
+              onUpdate={(id, input) => run(() => api.updatePromotion(token, id, input).then(noop), "Promocion actualizada")}
+              onDelete={(id) => run(() => api.deletePromotion(token, id), "Promocion eliminada")}
             />
           ) : null}
 
@@ -133,8 +153,13 @@ export function App() {
 
           {section === "categories" ? (
             <CatalogView
+              kind="categories"
               title="Categorias"
               items={categories}
+              departments={departments}
+              onCreateDepartment={(input) => run(() => api.createDepartment(token, input).then(noop), "Rubro creado")}
+              onUpdateDepartment={(id, input) => run(() => api.updateDepartment(token, id, input).then(noop), "Rubro actualizado")}
+              onDeleteDepartment={(id) => run(() => api.deleteDepartment(token, id), "Rubro eliminado")}
               onCreate={(input) => run(() => api.createCategory(token, input).then(noop), "Categoria creada")}
               onUpdate={(id, input) => run(() => api.updateCategory(token, id, input).then(noop), "Categoria actualizada")}
               onDelete={(id) => run(() => api.deleteCategory(token, id), "Categoria eliminada")}
@@ -143,8 +168,10 @@ export function App() {
 
           {section === "brands" ? (
             <CatalogView
+              kind="brands"
               title="Marcas"
               items={brands}
+              departments={departments}
               onCreate={(input) => run(() => api.createBrand(token, input).then(noop), "Marca creada")}
               onUpdate={(id, input) => run(() => api.updateBrand(token, id, input).then(noop), "Marca actualizada")}
               onDelete={(id) => run(() => api.deleteBrand(token, id), "Marca eliminada")}

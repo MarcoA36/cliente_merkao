@@ -14,6 +14,13 @@ export type Category = {
   id: string;
   name: string;
   slug: string;
+  imageUrl?: string | null;
+  departmentId?: string | null;
+  department?: {
+    id: string;
+    name: string;
+    slug: string;
+  } | null;
   _count?: { products: number };
 };
 
@@ -21,6 +28,7 @@ export type Brand = {
   id: string;
   name: string;
   slug: string;
+  imageUrl?: string | null;
   _count?: { products: number };
 };
 
@@ -30,6 +38,12 @@ export type Product = {
   description: string;
   price: number;
   promotionalPrice: number | null;
+  quantityPrices?: Array<{
+    id: string;
+    from: number;
+    to: number | null;
+    price: number;
+  }>;
   effectivePrice: number;
   stock: number;
   imageUrl: string;
@@ -51,8 +65,15 @@ export type ProductInput = {
   description: string;
   price: number;
   promotionalPrice?: number | null;
+  quantityPrices?: Array<{
+    id: string;
+    from: number;
+    to: number | null;
+    price: number;
+  }>;
   stock: number;
   imageUrl: string;
+  localImageName?: string;
   categoryId: string;
   brandId: string;
 };

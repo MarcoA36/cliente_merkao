@@ -1,6 +1,7 @@
 import { ClipboardList, DollarSign, PackageCheck, ShieldAlert } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Order, Product } from "../types";
+import * as ui from "../uiStyles";
 import { money } from "../utils/format";
 
 export function DashboardSummary({ products, orders }: { products: Product[]; orders: Order[] }) {
@@ -12,7 +13,7 @@ export function DashboardSummary({ products, orders }: { products: Product[]; or
   const averageOrder = orders.length > 0 ? orders.reduce((sum, order) => sum + order.total, 0) / orders.length : 0;
 
   return (
-    <section className="summaryGrid" aria-label="Resumen administrativo">
+    <section className={ui.summaryGrid} aria-label="Resumen administrativo">
       <SummaryCard icon={<DollarSign />} label="Ventas abiertas" value={`$${money(openRevenue)}`} trend="+12%" tone="success" />
       <SummaryCard icon={<ClipboardList />} label="Pedidos pendientes" value={pendingOrders} trend="Atencion" tone="secondary" />
       <SummaryCard icon={<ShieldAlert />} label="Productos sin stock" value={criticalStock} trend="Critico" tone="danger" />
@@ -34,14 +35,16 @@ function SummaryCard({
   trend: string;
   value: ReactNode;
 }) {
+  const toneClasses = ui.summaryToneClasses[tone];
+
   return (
-    <article className={`summaryCard tone-${tone}`}>
-      <div className="summaryTop">
-        <span className="summaryIcon">{icon}</span>
-        <span className="summaryTrend">{trend}</span>
+    <article className={ui.cn(ui.summaryCard, toneClasses.card)}>
+      <div className={ui.summaryTop}>
+        <span className={ui.cn(ui.summaryIcon, toneClasses.indicator)}>{icon}</span>
+        <span className={ui.cn(ui.summaryTrend, toneClasses.indicator)}>{trend}</span>
       </div>
-      <span className="summaryLabel">{label}</span>
-      <strong>{value}</strong>
+      <span className={ui.summaryLabel}>{label}</span>
+      <strong className={ui.summaryValue}>{value}</strong>
     </article>
   );
 }

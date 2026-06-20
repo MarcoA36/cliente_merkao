@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import * as api from "../api";
 import type { User } from "../types";
+import * as ui from "../uiStyles";
 
 export function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) => void }) {
   const [email, setEmail] = useState("admin@merkao.local");
@@ -27,25 +28,25 @@ export function LoginScreen({ onLogin }: { onLogin: (token: string, user: User) 
   }
 
   return (
-    <div className="loginPage">
-      <form className="loginPanel" onSubmit={handleSubmit}>
-        <div className="brandBlock">
-          <div className="brandMark">M</div>
+    <div className={ui.loginPage}>
+      <form className={ui.loginPanel} onSubmit={handleSubmit}>
+        <div className={ui.brandBlockCompact}>
+          <div className={ui.brandMark}>M</div>
           <div>
-            <h1>Merkao CMS</h1>
-            <p>Acceso administrador</p>
+            <h1 className={ui.brandTitle}>Merkao CMS</h1>
+            <p className={ui.brandSubtitle}>Acceso administrador</p>
           </div>
         </div>
-        <label>
+        <label className={ui.fieldLabel}>
           Email
-          <input value={email} onChange={(event) => setEmail(event.target.value)} />
+          <input className={ui.fieldInput} value={email} onChange={(event) => setEmail(event.target.value)} />
         </label>
-        <label>
+        <label className={ui.fieldLabel}>
           Password
-          <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+          <input className={ui.fieldInput} type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
         </label>
-        {error ? <div className="notice error">{error}</div> : null}
-        <button className="primaryButton" disabled={loading}>
+        {error ? <div className={ui.cn(ui.inlineNotice, ui.noticeError)}>{error}</div> : null}
+        <button className={ui.primaryButton} disabled={loading}>
           {loading ? "Ingresando..." : "Ingresar"}
         </button>
       </form>

@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  BadgePercent,
   Bell,
   Boxes,
   CalendarDays,
@@ -18,6 +19,7 @@ import {
 import { useState, type ReactNode } from "react";
 import type { Section } from "../adminTypes";
 import type { User } from "../types";
+import * as ui from "../uiStyles";
 import { initials } from "../utils/format";
 import { sectionTitle } from "../utils/sections";
 import { NavButton } from "./NavButton";
@@ -47,43 +49,49 @@ export function AdminLayout({
   }
 
   return (
-    <div className="shell">
-      <header className="mobileHeader">
-        <button className="iconButton" aria-label="Abrir menu" onClick={() => setMobileNavOpen(true)}>
+    <div className={ui.shell}>
+      <header className={ui.mobileHeader}>
+        <button className={ui.iconButton} aria-label="Abrir menu" onClick={() => setMobileNavOpen(true)}>
           <Menu size={19} />
         </button>
-        <strong>MarketAdmin</strong>
-        <div className="mobileHeaderActions">
-          <button className="iconButton" aria-label="Buscar">
+        <strong className={ui.mobileHeaderTitle}>MarketAdmin</strong>
+        <div className={ui.mobileHeaderActions}>
+          <button className={ui.iconButton} aria-label="Buscar">
             <Search size={17} />
           </button>
-          <div className="avatarBadge">{initials(user.name)}</div>
+          <div className={ui.avatarBadge}>{initials(user.name)}</div>
         </div>
       </header>
 
       <button
-        className={mobileNavOpen ? "drawerOverlay open" : "drawerOverlay"}
+        className={ui.cn(ui.drawerOverlayBase, mobileNavOpen ? ui.drawerOverlayOpen : ui.drawerOverlayClosed)}
         aria-label="Cerrar menu"
         onClick={() => setMobileNavOpen(false)}
       />
 
-      <aside className={mobileNavOpen ? "sidebar open" : "sidebar"}>
-        <div className="brandBlock">
-          <div className="brandMark">
+      <aside className={ui.cn(ui.sidebarBase, mobileNavOpen ? ui.sidebarOpen : ui.sidebarClosed)}>
+        <div className={ui.brandBlock}>
+          <div className={ui.brandMark}>
             <Boxes size={18} />
           </div>
           <div>
-            <h1>MarketAdmin</h1>
-            <p>Management Portal</p>
+            <h1 className={ui.brandTitle}>MarketAdmin</h1>
+            <p className={ui.brandSubtitle}>Management Portal</p>
           </div>
-          <button className="iconButton drawerClose" aria-label="Cerrar menu" onClick={() => setMobileNavOpen(false)}>
+          <button className={ui.cn(ui.iconButton, ui.drawerClose)} aria-label="Cerrar menu" onClick={() => setMobileNavOpen(false)}>
             <X size={17} />
           </button>
         </div>
 
-        <nav className="nav">
+        <nav className={ui.nav}>
+          <NavButton icon={<ClipboardList />} active={section === "orders"} onClick={() => selectSection("orders")}>
+            Pedidos
+          </NavButton>
           <NavButton icon={<Boxes />} active={section === "products"} onClick={() => selectSection("products")}>
             Productos
+          </NavButton>
+          <NavButton icon={<BadgePercent />} active={section === "promotions"} onClick={() => selectSection("promotions")}>
+            Promociones
           </NavButton>
           <NavButton icon={<PackagePlus />} active={section === "inventory"} onClick={() => selectSection("inventory")}>
             Inventario
@@ -94,57 +102,54 @@ export function AdminLayout({
           <NavButton icon={<Tags />} active={section === "brands"} onClick={() => selectSection("brands")}>
             Marcas
           </NavButton>
-          <NavButton icon={<ClipboardList />} active={section === "orders"} onClick={() => selectSection("orders")}>
-            Pedidos
-          </NavButton>
         </nav>
 
-        <div className="userBox">
-          <div className="avatarBadge large">{initials(user.name)}</div>
+        <div className={ui.userBox}>
+          <div className={ui.avatarBadgeLarge}>{initials(user.name)}</div>
           <div>
-            <strong>{user.name}</strong>
-            <span>{user.email}</span>
+            <strong className={ui.userName}>{user.name}</strong>
+            <span className={ui.userEmail}>{user.email}</span>
           </div>
-          <button className="ghostButton" onClick={onLogout}>
+          <button className={ui.ghostButton} onClick={onLogout}>
             <LogOut size={16} />
             Salir
           </button>
         </div>
       </aside>
 
-      <main className="main">
-        <header className="topbar">
-          <div className="topSearch">
+      <main className={ui.main}>
+        <header className={ui.topbar}>
+          <div className={ui.topSearch}>
             <Search size={17} />
-            <input placeholder="Buscar pedidos, productos o clientes..." />
+            <input className={ui.searchInput} placeholder="Buscar pedidos, productos o clientes..." />
           </div>
-          <div className="topbarActions">
-            <button className="iconButton notificationButton" aria-label="Notificaciones">
+          <div className={ui.topbarActions}>
+            <button className={ui.cn(ui.iconButton, ui.notificationButton)} aria-label="Notificaciones">
               <Bell size={17} />
-              <span />
+              <span className={ui.notificationDot} />
             </button>
-            <button className="profileButton">
+            <button className={ui.profileButton}>
               Admin Profile
               <ChevronDown size={15} />
             </button>
           </div>
         </header>
 
-        <section className="pageHeader">
+        <section className={ui.pageHeader}>
           <div>
-            <h2>Panel de Control</h2>
-            <p>
+            <h2 className={ui.pageTitle}>Panel de Control</h2>
+            <p className={ui.pageSubtitle}>
               Bienvenido de nuevo, {user.name}. Vista actual: {sectionTitle(section)}.
             </p>
           </div>
-          <div className="pageActions">
-            <button className="secondaryButton iconOnly" aria-label="Calendario">
+          <div className={ui.pageActions}>
+            <button className={ui.secondaryIconButton} aria-label="Calendario">
               <CalendarDays size={16} />
             </button>
-            <button className="secondaryButton iconOnly" aria-label="Actualizar" onClick={onRefresh} disabled={loading}>
+            <button className={ui.secondaryIconButton} aria-label="Actualizar" onClick={onRefresh} disabled={loading}>
               <RefreshCw size={16} />
             </button>
-            <button className="primaryButton" onClick={() => selectSection("products")}>
+            <button className={ui.primaryButton} onClick={() => selectSection("products")}>
               <Plus size={16} />
               Nuevo Producto
             </button>
@@ -154,25 +159,37 @@ export function AdminLayout({
         {children}
       </main>
 
-      <nav className="bottomBar" aria-label="Navegacion principal">
-        <button className={section === "products" ? "active" : ""} onClick={() => selectSection("products")}>
-          <Boxes size={19} />
-          <span>Home</span>
-        </button>
-        <button className={section === "inventory" ? "active" : ""} onClick={() => selectSection("inventory")}>
-          <PackagePlus size={19} />
-          <span>Stock</span>
-        </button>
-        <button className={section === "orders" ? "active" : ""} onClick={() => selectSection("orders")}>
+      <nav className={ui.bottomBar} aria-label="Navegacion principal">
+        <button
+          className={ui.cn(ui.bottomBarButton, section === "orders" && ui.bottomBarButtonActive)}
+          onClick={() => selectSection("orders")}
+        >
           <ClipboardList size={19} />
-          <span>Orders</span>
+          <span>Pedidos</span>
         </button>
         <button
-          className={section === "categories" || section === "brands" ? "active" : ""}
-          onClick={() => selectSection("categories")}
+          className={ui.cn(ui.bottomBarButton, section === "products" && ui.bottomBarButtonActive)}
+          onClick={() => selectSection("products")}
+        >
+          <Boxes size={19} />
+          <span>Productos</span>
+        </button>
+        <button
+          className={ui.cn(ui.bottomBarButton, section === "promotions" && ui.bottomBarButtonActive)}
+          onClick={() => selectSection("promotions")}
+        >
+          <BadgePercent size={19} />
+          <span>Promos</span>
+        </button>
+        <button
+          className={ui.cn(
+            ui.bottomBarButton,
+            (section === "inventory" || section === "categories" || section === "brands") && ui.bottomBarButtonActive
+          )}
+          onClick={() => selectSection("inventory")}
         >
           <BarChart3 size={19} />
-          <span>Stats</span>
+          <span>Gestion</span>
         </button>
       </nav>
     </div>

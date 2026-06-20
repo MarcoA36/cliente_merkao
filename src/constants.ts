@@ -7,6 +7,7 @@ export const emptyProduct: ProductInput = {
   description: "",
   price: 0,
   promotionalPrice: null,
+  quantityPrices: [{ id: "range-1", from: 1, to: 5, price: 0 }],
   stock: 0,
   imageUrl: "",
   categoryId: "",

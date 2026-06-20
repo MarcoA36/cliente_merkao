@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import * as ui from "../uiStyles";
 
 export function NavButton({
   active,
@@ -12,7 +13,7 @@ export function NavButton({
   onClick: () => void;
 }) {
   return (
-    <button className={active ? "navButton active" : "navButton"} onClick={onClick}>
+    <button className={ui.cn(ui.navButtonBase, active && ui.navButtonActive)} onClick={onClick}>
       {icon}
       {children}
     </button>

@@ -2,6 +2,7 @@ import { Save } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { InventoryInput } from "../adminTypes";
 import type { Product } from "../types";
+import * as ui from "../uiStyles";
 
 export function InventoryView({ products, onSave }: { products: Product[]; onSave: (id: string, input: InventoryInput) => void }) {
   const [drafts, setDrafts] = useState<Record<string, { price: string; promotionalPrice: string; stock: string }>>({});
@@ -29,16 +30,16 @@ export function InventoryView({ products, onSave }: { products: Product[]; onSav
   }
 
   return (
-    <section className="workArea">
-      <div className="tableWrap">
-        <table>
+    <section className={ui.workArea}>
+      <div className={ui.tableWrap}>
+        <table className={ui.table}>
           <thead>
             <tr>
-              <th>Producto</th>
-              <th>Precio base</th>
-              <th>Precio promocional</th>
-              <th>Stock</th>
-              <th></th>
+              <th className={ui.th}>Producto</th>
+              <th className={ui.th}>Precio base</th>
+              <th className={ui.th}>Precio por cantidad</th>
+              <th className={ui.th}>Stock</th>
+              <th className={ui.th}></th>
             </tr>
           </thead>
           <tbody>
@@ -46,38 +47,33 @@ export function InventoryView({ products, onSave }: { products: Product[]; onSav
               const draft = drafts[product.id];
               return (
                 <tr key={product.id}>
-                  <td>
-                    <strong>{product.name}</strong>
-                    <span className="subtle">{product.brand.name}</span>
+                  <td className={ui.td}>
+                    <strong className={ui.tableStrong}>{product.name}</strong>
+                    <span className={ui.subtle}>{product.brand.name}</span>
                   </td>
-                  <td>
+                  <td className={ui.td}>
                     <input
-                      className="compactInput"
+                      className={ui.compactInput}
                       value={draft?.price ?? ""}
                       onChange={(event) => updateDraft(product.id, "price", event.target.value)}
                     />
                   </td>
-                  <td>
-                    <input
-                      className="compactInput"
-                      value={draft?.promotionalPrice ?? ""}
-                      onChange={(event) => updateDraft(product.id, "promotionalPrice", event.target.value)}
-                    />
+                  <td className={ui.td}>
+                    <span className={ui.subtle}>Editar rangos desde producto</span>
                   </td>
-                  <td>
+                  <td className={ui.td}>
                     <input
-                      className="compactInput"
+                      className={ui.compactInput}
                       value={draft?.stock ?? ""}
                       onChange={(event) => updateDraft(product.id, "stock", event.target.value)}
                     />
                   </td>
-                  <td className="actions">
+                  <td className={ui.cn(ui.td, ui.actions)}>
                     <button
-                      className="primaryButton small"
+                      className={ui.cn(ui.primaryButton, ui.smallButton)}
                       onClick={() =>
                         onSave(product.id, {
                           price: Number(draft?.price),
-                          promotionalPrice: draft?.promotionalPrice ? Number(draft.promotionalPrice) : null,
                           stock: Number(draft?.stock)
                         })
                       }

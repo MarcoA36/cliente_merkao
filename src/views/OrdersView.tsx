@@ -1,6 +1,7 @@
 import { Archive, Download } from "lucide-react";
 import { nextStatus, statusLabels } from "../constants";
 import type { Order } from "../types";
+import * as ui from "../uiStyles";
 import { money } from "../utils/format";
 
 export function OrdersView({
@@ -17,10 +18,11 @@ export function OrdersView({
   onVoucher: (order: Order) => void;
 }) {
   return (
-    <section className="workArea">
-      <div className="toolbar">
-        <label className="checkLabel">
+    <section className={ui.workArea}>
+      <div className={ui.toolbar}>
+        <label className={ui.checkLabel}>
           <input
+            className={ui.checkbox}
             type="checkbox"
             checked={includeArchived}
             onChange={(event) => onToggleArchived(event.target.checked)}
@@ -28,49 +30,49 @@ export function OrdersView({
           Incluir entregados archivados
         </label>
       </div>
-      <div className="tableWrap">
-        <table>
+      <div className={ui.tableWrap}>
+        <table className={ui.table}>
           <thead>
             <tr>
-              <th>Pedido</th>
-              <th>Envio</th>
-              <th>Items</th>
-              <th>Total</th>
-              <th>Estado</th>
-              <th></th>
+              <th className={ui.th}>Pedido</th>
+              <th className={ui.th}>Envio</th>
+              <th className={ui.th}>Items</th>
+              <th className={ui.th}>Total</th>
+              <th className={ui.th}>Estado</th>
+              <th className={ui.th}></th>
             </tr>
           </thead>
           <tbody>
             {orders.map((order) => (
               <tr key={order.id}>
-                <td>
-                  <strong>#{order.id.slice(-8)}</strong>
-                  <span className="subtle">{new Date(order.createdAt).toLocaleString("es-AR")}</span>
+                <td className={ui.td}>
+                  <strong className={ui.tableStrong}>#{order.id.slice(-8)}</strong>
+                  <span className={ui.subtle}>{new Date(order.createdAt).toLocaleString("es-AR")}</span>
                 </td>
-                <td>
-                  <strong>{order.addressSnapshot.recipientName}</strong>
-                  <span className="subtle">
+                <td className={ui.td}>
+                  <strong className={ui.tableStrong}>{order.addressSnapshot.recipientName}</strong>
+                  <span className={ui.subtle}>
                     {order.addressSnapshot.street}, {order.addressSnapshot.city}
                   </span>
                 </td>
-                <td>
+                <td className={ui.td}>
                   {order.items.slice(0, 2).map((item) => (
-                    <span key={item.id} className="lineItem">
+                    <span key={item.id} className={ui.lineItem}>
                       {item.quantity} x {item.productName}
                     </span>
                   ))}
                 </td>
-                <td>${money(order.total)}</td>
-                <td>
-                  <span className={`pill status-${order.status.toLowerCase()}`}>{statusLabels[order.status]}</span>
+                <td className={ui.td}>${money(order.total)}</td>
+                <td className={ui.td}>
+                  <span className={ui.statusPill(order.status)}>{statusLabels[order.status]}</span>
                 </td>
-                <td className="actions wide">
-                  <button className="secondaryButton small" onClick={() => onVoucher(order)}>
+                <td className={ui.cn(ui.td, ui.actionsWide)}>
+                  <button className={ui.cn(ui.secondaryButton, ui.smallButton)} onClick={() => onVoucher(order)}>
                     <Download size={15} />
                     Voucher
                   </button>
                   {nextStatus[order.status] ? (
-                    <button className="primaryButton small" onClick={() => onAdvance(order)}>
+                    <button className={ui.cn(ui.primaryButton, ui.smallButton)} onClick={() => onAdvance(order)}>
                       <Archive size={15} />
                       {statusLabels[nextStatus[order.status]!]}
                     </button>
@@ -80,7 +82,7 @@ export function OrdersView({
             ))}
             {orders.length === 0 ? (
               <tr>
-                <td colSpan={6} className="emptyCell">
+                <td colSpan={6} className={ui.emptyCell}>
                   No hay pedidos para mostrar.
                 </td>
               </tr>

@@ -1,6 +1,7 @@
 import { BarChart3, ClipboardList, ShieldAlert, SlidersHorizontal } from "lucide-react";
 import { statusLabels } from "../constants";
 import type { Order, Product } from "../types";
+import * as ui from "../uiStyles";
 import { money } from "../utils/format";
 
 export function OperationalRail({
@@ -14,52 +15,52 @@ export function OperationalRail({
 }) {
   const lowStock = [...products].sort((first, second) => first.stock - second.stock).slice(0, 5);
   const latestOrders = orders.slice(0, 3);
-  const activityBars = [46, 56, 42, 68, 84, 58, 52];
+  const activityBars = ["h-[46%]", "h-[56%]", "h-[42%]", "h-[68%]", "h-[84%]", "h-[58%]", "h-[52%]"];
 
   return (
-    <aside className="operationalRail" aria-label="Bajo stock y actividad">
-      <section className="railCard">
-        <div className="railHeader">
-          <h3>
+    <aside className={ui.operationalRail} aria-label="Bajo stock y actividad">
+      <section className={ui.railCard}>
+        <div className={ui.railHeader}>
+          <h3 className={ui.railHeaderTitle}>
             <ShieldAlert size={17} />
             Bajo Stock
           </h3>
-          <span className="alertBadge">{lowStock.length} alerts</span>
+          <span className={ui.alertBadge}>{lowStock.length} alerts</span>
         </div>
-        <div className="railList">
+        <div className={ui.railList}>
           {lowStock.map((product) => (
-            <article className="stockItem" key={product.id}>
-              <img src={product.imageUrl} alt="" />
+            <article className={ui.stockItem} key={product.id}>
+              <img className={ui.stockImage} src={product.imageUrl} alt="" />
               <div>
-                <strong>{product.name}</strong>
-                <span>{product.category.name}</span>
+                <strong className={ui.stockName}>{product.name}</strong>
+                <span className={ui.stockMeta}>{product.category.name}</span>
               </div>
-              <b>{product.stock} ud.</b>
+              <b className={ui.stockCount}>{product.stock} ud.</b>
             </article>
           ))}
-          {lowStock.length === 0 ? <p className="railEmpty">Sin alertas de inventario.</p> : null}
+          {lowStock.length === 0 ? <p className={ui.railEmpty}>Sin alertas de inventario.</p> : null}
         </div>
-        <button className="replenishButton" onClick={onInventory}>
+        <button className={ui.replenishButton} onClick={onInventory}>
           Reabastecer Todo
         </button>
       </section>
 
-      <section className="railCard">
-        <div className="railHeader">
-          <h3>
+      <section className={ui.railCard}>
+        <div className={ui.railHeader}>
+          <h3 className={ui.railHeaderTitle}>
             <BarChart3 size={17} />
             Actividad del Sitio
           </h3>
-          <button className="iconButton" aria-label="Opciones">
+          <button className={ui.iconButton} aria-label="Opciones">
             <SlidersHorizontal size={15} />
           </button>
         </div>
-        <div className="activityChart" aria-hidden="true">
-          {activityBars.map((height, index) => (
-            <span key={index} style={{ height: `${height}%` }} />
+        <div className={ui.activityChart} aria-hidden="true">
+          {activityBars.map((heightClass, index) => (
+            <span key={heightClass} className={ui.cn(index === 4 ? ui.activityBarActive : ui.activityBar, heightClass)} />
           ))}
         </div>
-        <div className="activityLabels">
+        <div className={ui.activityLabels}>
           <span>Lun</span>
           <span>Mar</span>
           <span>Mie</span>
@@ -70,27 +71,27 @@ export function OperationalRail({
         </div>
       </section>
 
-      <section className="railCard mobileOrdersCard">
-        <div className="railHeader">
-          <h3>
+      <section className={ui.mobileOrdersCard}>
+        <div className={ui.railHeader}>
+          <h3 className={ui.railHeaderTitle}>
             <ClipboardList size={17} />
             Pedidos Recientes
           </h3>
         </div>
-        <div className="orderCards">
+        <div className={ui.orderCards}>
           {latestOrders.map((order) => (
-            <article className="orderCard" key={order.id}>
+            <article className={ui.orderCard} key={order.id}>
               <div>
-                <strong>#{order.id.slice(-8)}</strong>
-                <span>{order.addressSnapshot.recipientName}</span>
+                <strong className={ui.tableStrong}>#{order.id.slice(-8)}</strong>
+                <span className={ui.orderCardMeta}>{order.addressSnapshot.recipientName}</span>
               </div>
               <div>
-                <strong>${money(order.total)}</strong>
-                <span className={`pill status-${order.status.toLowerCase()}`}>{statusLabels[order.status]}</span>
+                <strong className={ui.tableStrong}>${money(order.total)}</strong>
+                <span className={ui.statusPill(order.status)}>{statusLabels[order.status]}</span>
               </div>
             </article>
           ))}
-          {latestOrders.length === 0 ? <p className="railEmpty">Todavia no hay pedidos.</p> : null}
+          {latestOrders.length === 0 ? <p className={ui.railEmpty}>Todavia no hay pedidos.</p> : null}
         </div>
       </section>
     </aside>
