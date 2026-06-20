@@ -1,1 +1,18 @@
-git rm -r --cached node_modules
+# Dependencias (¡Lo más importante!)
+node_modules/
+
+# Producción (La carpeta que genera Vite al compilar)
+dist/
+
+# Variables de entorno (Seguridad para que no se suban tus URLs ni claves)
+.env
+.env.local
+.env.*
+!.env.example
+
+# Logs y Cache
+*.log
+.eslintcache
+
+# Cobertura de Tests (Por si usas Vitest)
+coverage/
