@@ -21,7 +21,7 @@ import type { Section } from "../adminTypes";
 import type { User } from "../types";
 import * as ui from "../uiStyles";
 import { initials } from "../utils/format";
-import { sectionTitle } from "../utils/sections";
+import { sectionDescription, sectionTitle } from "../utils/sections";
 import { NavButton } from "./NavButton";
 
 export function AdminLayout({
@@ -54,7 +54,7 @@ export function AdminLayout({
         <button className={ui.iconButton} aria-label="Abrir menu" onClick={() => setMobileNavOpen(true)}>
           <Menu size={19} />
         </button>
-        <strong className={ui.mobileHeaderTitle}>MarketAdmin</strong>
+        <strong className={ui.mobileHeaderTitle}>Merkao Admin</strong>
         <div className={ui.mobileHeaderActions}>
           <button className={ui.iconButton} aria-label="Buscar">
             <Search size={17} />
@@ -75,8 +75,8 @@ export function AdminLayout({
             <Boxes size={18} />
           </div>
           <div>
-            <h1 className={ui.brandTitle}>MarketAdmin</h1>
-            <p className={ui.brandSubtitle}>Management Portal</p>
+            <h1 className={ui.brandTitle}>Merkao Admin</h1>
+            <p className={ui.brandSubtitle}>Operational CMS</p>
           </div>
           <button className={ui.cn(ui.iconButton, ui.drawerClose)} aria-label="Cerrar menu" onClick={() => setMobileNavOpen(false)}>
             <X size={17} />
@@ -137,10 +137,8 @@ export function AdminLayout({
 
         <section className={ui.pageHeader}>
           <div>
-            <h2 className={ui.pageTitle}>Panel de Control</h2>
-            <p className={ui.pageSubtitle}>
-              Bienvenido de nuevo, {user.name}. Vista actual: {sectionTitle(section)}.
-            </p>
+            <h2 className={ui.pageTitle}>{sectionTitle(section)}</h2>
+            <p className={ui.pageSubtitle}>{sectionDescription(section, user.name)}</p>
           </div>
           <div className={ui.pageActions}>
             <button className={ui.secondaryIconButton} aria-label="Calendario">

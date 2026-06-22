@@ -4,10 +4,53 @@ export type Section = "orders" | "products" | "promotions" | "inventory" | "cate
 
 export type EditableProduct = Product | (ProductInput & { id?: string });
 
+export type PaginationMeta = {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  from: number;
+  to: number;
+};
+
+export type PageParams = {
+  page?: number;
+  limit?: number;
+  search?: string;
+};
+
 export type InventoryInput = {
   price?: number;
-  promotionalPrice?: number | null;
   stock?: number;
+  reason?: string;
+};
+
+export type InventoryMovementType = "IN" | "OUT" | "ADJUSTMENT" | "RESERVED" | "RELEASED";
+
+export type InventoryMovement = {
+  id: string;
+  productId: string;
+  type: InventoryMovementType;
+  quantity: number;
+  reason: string;
+  orderId: string | null;
+  changedByUserId: string | null;
+  createdAt: string;
+  product: {
+    id: string;
+    name: string;
+    imageUrl: string;
+    stock: number;
+    brand: {
+      id: string;
+      name: string;
+    };
+  };
+  changedBy?: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
 };
 
 export type CatalogInput = {

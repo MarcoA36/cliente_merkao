@@ -7,7 +7,7 @@ import type {
   Product,
   ProductInput
 } from "./types";
-import type { CatalogInput, Department, PromotionDraft } from "./adminTypes";
+import type { CatalogInput, Department, InventoryMovement, PageParams, PaginationMeta, PromotionDraft } from "./adminTypes";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") ?? "http://localhost:4000";
 
@@ -44,6 +44,18 @@ async function request<T>(path: string, token: string | null, options: RequestIn
   }
 
   return payload as T;
+}
+
+function pathWithQuery(path: string, params: Record<string, boolean | number | string | undefined> = {}) {
+  const query = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === "") continue;
+    query.set(key, String(value));
+  }
+
+  const suffix = query.toString();
+  return suffix ? `${path}?${suffix}` : path;
 }
 
 export function login(email: string, password: string) {
@@ -119,8 +131,8 @@ export function deleteBrand(token: string, id: string) {
   return request<void>(`/admin/brands/${id}`, token, { method: "DELETE" });
 }
 
-export function listProducts(token: string) {
-  return request<{ products: Product[] }>("/admin/products", token);
+export function listProducts(token: string, params: PageParams = {}) {
+  return request<{ products: Product[]; pagination: PaginationMeta }>(pathWithQuery("/admin/products", params), token);
 }
 
 export function createProduct(token: string, input: ProductInput) {
@@ -140,7 +152,7 @@ export function updateProduct(token: string, id: string, input: ProductInput) {
 export function updateInventory(
   token: string,
   id: string,
-  input: { price?: number; promotionalPrice?: number | null; stock?: number }
+  input: { price?: number; stock?: number; reason?: string }
 ) {
   return request<{ product: Product }>(`/admin/products/${id}/inventory`, token, {
     method: "PATCH",
@@ -152,8 +164,8 @@ export function deleteProduct(token: string, id: string) {
   return request<void>(`/admin/products/${id}`, token, { method: "DELETE" });
 }
 
-export function listPromotions(token: string) {
-  return request<{ promotions: PromotionDraft[] }>("/admin/promotions", token);
+export function listPromotions(token: string, params: PageParams & { kind?: "all" | "individual" | "combo" } = {}) {
+  return request<{ promotions: PromotionDraft[]; pagination: PaginationMeta }>(pathWithQuery("/admin/promotions", params), token);
 }
 
 export function createPromotion(token: string, input: PromotionDraft) {
@@ -161,6 +173,13 @@ export function createPromotion(token: string, input: PromotionDraft) {
     method: "POST",
     body: JSON.stringify(promotionPayload(input))
   });
+}
+
+export function listInventoryMovements(token: string, params: PageParams & { productId?: string } = {}) {
+  return request<{ movements: InventoryMovement[]; pagination: PaginationMeta }>(
+    pathWithQuery("/admin/inventory-movements", params),
+    token
+  );
 }
 
 export function updatePromotion(token: string, id: string, input: PromotionDraft) {
@@ -174,15 +193,28 @@ export function deletePromotion(token: string, id: string) {
   return request<void>(`/admin/promotions/${id}`, token, { method: "DELETE" });
 }
 
-export function listOrders(token: string, includeArchived: boolean) {
-  const suffix = includeArchived ? "?includeArchived=true" : "";
-  return request<{ orders: Order[] }>(`/admin/orders${suffix}`, token);
+export function updatePromotionStatus(token: string, id: string, active: boolean) {
+  return request<{ promotion: PromotionDraft }>(`/admin/promotions/${id}/status`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ active })
+  });
 }
 
-export function updateOrderStatus(token: string, id: string, status: OrderStatus) {
+export function listOrders(
+  token: string,
+  params: PageParams & { includeArchived?: boolean; status?: "ALL" | OrderStatus; date?: string } = {}
+) {
+  const { status, ...rest } = params;
+  return request<{ orders: Order[]; pagination: PaginationMeta }>(
+    pathWithQuery("/admin/orders", { ...rest, status: status === "ALL" ? undefined : status }),
+    token
+  );
+}
+
+export function updateOrderStatus(token: string, id: string, status: OrderStatus, notes?: string) {
   return request<{ order: Order }>(`/admin/orders/${id}/status`, token, {
     method: "PATCH",
-    body: JSON.stringify({ status })
+    body: JSON.stringify({ status, notes: notes || undefined })
   });
 }
 
@@ -218,7 +250,6 @@ function productPayload(input: ProductInput) {
     name: input.name,
     description: input.description,
     price: input.price,
-    promotionalPrice: input.promotionalPrice ?? null,
     quantityPrices: input.quantityPrices ?? [],
     stock: input.stock,
     imageUrl: input.imageUrl,

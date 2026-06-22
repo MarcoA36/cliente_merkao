@@ -5,27 +5,32 @@ module.exports = {
     extend: {
       colors: {
         merkao: {
-          background: "#F6F7F9",
+          background: "#F5FBF5",
           surface: "#FFFFFF",
-          surfaceAlt: "#F1F4F7",
-          surfaceHigh: "#E8EDF3",
-          text: "#111827",
-          muted: "#6B7280",
-          border: "#E5E7EB",
-          outline: "#D1D5DB",
-          primary: "#007A4D",
-          primaryDark: "#005C3A",
-          primarySoft: "#E6F7EF",
-          secondary: "#4F46E5",
-          secondarySoft: "#EEF2FF",
-          accent: "#F28C18",
-          danger: "#DC2626",
-          dangerSoft: "#FEE2E2",
-          sidebar: "#FFFFFF"
+          surfaceAlt: "#EFF5EF",
+          surfaceHigh: "#E4EAE4",
+          text: "#171D19",
+          muted: "#586377",
+          border: "#D5DCD6",
+          outline: "#BCCAC0",
+          primary: "#006948",
+          primaryDark: "#005137",
+          primarySoft: "#DDF8EA",
+          secondary: "#545F73",
+          secondarySoft: "#D8E3FB",
+          accent: "#677689",
+          danger: "#BA1A1A",
+          dangerSoft: "#FFDAD6",
+          sidebar: "#F5FBF5"
         }
       },
+      fontFamily: {
+        sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"]
+      },
       borderRadius: {
-        merkao: "8px"
+        merkao: "4px",
+        merkaoPanel: "8px"
       }
     }
   },

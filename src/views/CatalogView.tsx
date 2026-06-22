@@ -107,7 +107,7 @@ export function CatalogView({
   }
 
   return (
-    <section className={ui.workAreaSplit}>
+    <section className={isCategories && !editing ? ui.workAreaSplit : ui.workArea}>
       <div>
         <div className={ui.toolbar}>
           <h3 className={ui.toolbarMainTitle}>{title}</h3>
@@ -160,7 +160,9 @@ export function CatalogView({
       </div>
 
       {editing ? (
-        <form className={ui.sidePanel} onSubmit={submit}>
+        <>
+        <button type="button" className={ui.modalOverlay} aria-label="Cerrar editor de catalogo" onClick={() => setEditing(null)} />
+        <form className={ui.catalogModal} onSubmit={submit}>
           <div className={ui.panelHeader}>
             <h3 className={ui.panelTitle}>{editing.id ? "Editar" : "Nuevo"}</h3>
             <button type="button" className={ui.iconButton} onClick={() => setEditing(null)}>
@@ -205,11 +207,17 @@ export function CatalogView({
             </p>
             {imageError ? <p className={ui.cn(ui.helperText, "font-bold text-merkao-danger")}>{imageError}</p> : null}
           </section>
-          <button className={ui.primaryButton}>
-            <Save size={16} />
-            Guardar
-          </button>
+          <div className={ui.modalActions}>
+            <button type="button" className={ui.secondaryButton} onClick={() => setEditing(null)}>
+              Cancelar
+            </button>
+            <button className={ui.primaryButton}>
+              <Save size={16} />
+              Guardar
+            </button>
+          </div>
         </form>
+        </>
       ) : isCategories ? (
         <aside className={ui.sidePanel}>
           <div>
@@ -227,7 +235,7 @@ export function CatalogView({
               <div className={ui.listRow} key={department.id}>
                 <div>
                   <strong className={ui.tableStrong}>{department.name}</strong>
-                  <span className={ui.subtle}>{department.slug} · {department._count?.categories ?? 0} categorias</span>
+                  <span className={ui.subtle}>{department.slug} - {department._count?.categories ?? 0} categorias</span>
                 </div>
                 <div className={ui.actions}>
                   <button type="button" className={ui.iconButton} aria-label="Editar rubro" onClick={() => beginDepartmentEdit(department)}>

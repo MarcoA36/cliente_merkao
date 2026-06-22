@@ -1,6 +1,7 @@
-import { BadgePercent, Edit3, PackagePlus, Save, Trash2 } from "lucide-react";
+import { BadgePercent, Edit3, PackagePlus, Power, Save, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import type { PromotionDraft, PromotionPriority } from "../adminTypes";
+import type { PaginationMeta, PromotionDraft, PromotionPriority } from "../adminTypes";
+import { PaginationControls } from "../components/PaginationControls";
 import type { Product } from "../types";
 import * as ui from "../uiStyles";
 import { money } from "../utils/format";
@@ -24,16 +25,28 @@ const emptyPromotion: PromotionDraft = {
 };
 
 export function PromotionsView({
+  kindFilter,
+  pagination,
   products,
   promotions,
+  onKindFilterChange,
+  onPageChange,
+  onPageSizeChange,
   onCreate,
   onUpdate,
+  onToggleStatus,
   onDelete
 }: {
+  kindFilter: "all" | "individual" | "combo";
+  pagination: PaginationMeta;
   products: Product[];
   promotions: PromotionDraft[];
+  onKindFilterChange: (kind: "all" | "individual" | "combo") => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
   onCreate: (input: PromotionDraft) => void;
   onUpdate: (id: string, input: PromotionDraft) => void;
+  onToggleStatus: (id: string, active: boolean) => void;
   onDelete: (id: string) => void;
 }) {
   const [editing, setEditing] = useState<PromotionDraft | null>(null);
@@ -65,8 +78,12 @@ export function PromotionsView({
     }));
   }
 
-  function productNames(productIds: string[]) {
-    return productIds
+  function productNames(promotion: PromotionDraft) {
+    if (promotion.products?.length) {
+      return promotion.products.map((product) => product.name).join(" + ");
+    }
+
+    return promotion.productIds
       .map((id) => products.find((product) => product.id === id)?.name)
       .filter(Boolean)
       .join(" + ");
@@ -78,12 +95,23 @@ export function PromotionsView({
         <div className={ui.toolbar}>
           <div>
             <h3 className={ui.toolbarMainTitle}>Promociones y combos</h3>
-            <p className={ui.toolbarMainText}>Promos armadas con productos ya cargados</p>
+            <p className={ui.toolbarMainText}>{pagination.total} promociones visibles</p>
           </div>
-          <button className={ui.primaryButton} onClick={() => beginEdit()}>
-            <PackagePlus size={16} />
-            Nueva promocion
-          </button>
+          <div className={ui.toolbarActions}>
+            <select
+              className={ui.fieldInput}
+              value={kindFilter}
+              onChange={(event) => onKindFilterChange(event.target.value as typeof kindFilter)}
+            >
+              <option value="all">Todas</option>
+              <option value="individual">Individuales</option>
+              <option value="combo">Combos</option>
+            </select>
+            <button className={ui.primaryButton} onClick={() => beginEdit()}>
+              <PackagePlus size={16} />
+              Nueva promocion
+            </button>
+          </div>
         </div>
 
         <div className={ui.tableWrap}>
@@ -107,7 +135,7 @@ export function PromotionsView({
                     <strong className={ui.tableStrong}>{promotion.name}</strong>
                     <span className={ui.subtle}>{promotion.productIds.length > 1 ? "Combo" : "Individual"}</span>
                   </td>
-                  <td className={ui.td}>{productNames(promotion.productIds) || "-"}</td>
+                  <td className={ui.td}>{productNames(promotion) || "-"}</td>
                   <td className={ui.td}>
                     <strong className={ui.tableStrong}>{promotion.startsAt || "Sin inicio"}</strong>
                     <span className={ui.subtle}>{promotion.endsAt || "Sin fin"}</span>
@@ -121,6 +149,13 @@ export function PromotionsView({
                     <span className={promotion.active ? ui.pillOk : ui.pillMuted}>{promotion.active ? "Activa" : "Inactiva"}</span>
                   </td>
                   <td className={ui.cn(ui.td, ui.actions)}>
+                    <button
+                      className={ui.iconButton}
+                      title={promotion.active ? "Desactivar" : "Activar"}
+                      onClick={() => onToggleStatus(promotion.id, !promotion.active)}
+                    >
+                      <Power size={16} />
+                    </button>
                     <button className={ui.iconButton} title="Editar" onClick={() => beginEdit(promotion)}>
                       <Edit3 size={16} />
                     </button>
@@ -140,6 +175,16 @@ export function PromotionsView({
             </tbody>
           </table>
         </div>
+        <PaginationControls
+          from={pagination.from}
+          page={pagination.page}
+          pageSize={pagination.limit}
+          to={pagination.to}
+          totalItems={pagination.total}
+          totalPages={pagination.totalPages}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+        />
       </div>
 
       {editing ? (

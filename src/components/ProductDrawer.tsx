@@ -23,7 +23,6 @@ export function ProductDrawer({
     name: product.name,
     description: product.description,
     price: product.price,
-    promotionalPrice: product.promotionalPrice ?? null,
     quantityPrices: "quantityPrices" in product && product.quantityPrices?.length
       ? product.quantityPrices
       : [{ id: "range-1", from: 1, to: 5, price: product.price || 0 }],
@@ -95,11 +94,13 @@ export function ProductDrawer({
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    onSubmit({ ...draft, promotionalPrice: null });
+    onSubmit(draft);
   }
 
   return (
-    <form className={ui.drawer} onSubmit={submit}>
+    <>
+      <button type="button" className={ui.modalOverlay} aria-label="Cerrar editor de producto" onClick={onClose} />
+      <form className={ui.drawer} onSubmit={submit}>
       <div className={ui.panelHeader}>
         <h3 className={ui.panelTitle}>{"id" in product && product.id ? "Editar producto" : "Nuevo producto"}</h3>
         <button type="button" className={ui.iconButton} onClick={onClose}>
@@ -234,11 +235,17 @@ export function ProductDrawer({
           </select>
         </label>
       </div>
-      <button className={ui.primaryButton}>
-        <Save size={16} />
-        Guardar
-      </button>
-    </form>
+      <div className={ui.modalActions}>
+        <button type="button" className={ui.secondaryButton} onClick={onClose}>
+          Cancelar
+        </button>
+        <button className={ui.primaryButton}>
+          <Save size={16} />
+          Guardar
+        </button>
+      </div>
+      </form>
+    </>
   );
 }
 

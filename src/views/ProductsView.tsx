@@ -1,6 +1,7 @@
 import { Edit3, Filter, PackagePlus, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
-import type { EditableProduct } from "../adminTypes";
+import type { EditableProduct, PaginationMeta } from "../adminTypes";
+import { PaginationControls } from "../components/PaginationControls";
 import { ProductDrawer } from "../components/ProductDrawer";
 import { emptyProduct } from "../constants";
 import type { Brand, Category, Product, ProductInput } from "../types";
@@ -10,30 +11,36 @@ import { money } from "../utils/format";
 export function ProductsView({
   brands,
   categories,
+  pagination,
   products,
+  query,
   onCreate,
   onUpdate,
-  onDelete
+  onDelete,
+  onPageChange,
+  onPageSizeChange,
+  onQueryChange
 }: {
   brands: Brand[];
   categories: Category[];
+  pagination: PaginationMeta;
   products: Product[];
+  query: string;
   onCreate: (input: ProductInput) => void;
   onUpdate: (id: string, input: ProductInput) => void;
   onDelete: (id: string) => void;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
+  onQueryChange: (query: string) => void;
 }) {
   const [editing, setEditing] = useState<EditableProduct | null>(null);
-  const [query, setQuery] = useState("");
-  const filtered = products.filter((product) =>
-    `${product.name} ${product.category.name} ${product.brand.name}`.toLowerCase().includes(query.toLowerCase())
-  );
 
   return (
     <section className={ui.workArea}>
       <div className={ui.toolbar}>
         <div>
           <h3 className={ui.toolbarMainTitle}>Productos publicados</h3>
-          <p className={ui.toolbarMainText}>{filtered.length} resultados en catalogo</p>
+          <p className={ui.toolbarMainText}>{pagination.total} resultados en catalogo</p>
         </div>
         <div className={ui.toolbarActions}>
           <div className={ui.searchBox}>
@@ -42,7 +49,7 @@ export function ProductsView({
               className={ui.searchInput}
               placeholder="Filtrar por ID o producto..."
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              onChange={(event) => onQueryChange(event.target.value)}
             />
           </div>
           <button className={ui.secondaryButton}>
@@ -71,7 +78,7 @@ export function ProductsView({
             </tr>
           </thead>
           <tbody>
-            {filtered.map((product) => (
+            {products.map((product) => (
               <tr key={product.id}>
                 <td className={ui.td}>
                   <div className={ui.productCell}>
@@ -104,9 +111,26 @@ export function ProductsView({
                 </td>
               </tr>
             ))}
+            {products.length === 0 ? (
+              <tr>
+                <td colSpan={8} className={ui.emptyCell}>
+                  No hay productos para mostrar.
+                </td>
+              </tr>
+            ) : null}
           </tbody>
         </table>
       </div>
+      <PaginationControls
+        from={pagination.from}
+        page={pagination.page}
+        pageSize={pagination.limit}
+        to={pagination.to}
+        totalItems={pagination.total}
+        totalPages={pagination.totalPages}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
 
       {editing ? (
         <ProductDrawer

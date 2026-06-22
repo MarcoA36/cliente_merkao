@@ -7,6 +7,7 @@ export type User = {
 
 export type AuthResponse = {
   token: string;
+  refreshToken?: string;
   user: User;
 };
 
@@ -37,7 +38,6 @@ export type Product = {
   name: string;
   description: string;
   price: number;
-  promotionalPrice: number | null;
   quantityPrices?: Array<{
     id: string;
     from: number;
@@ -64,7 +64,6 @@ export type ProductInput = {
   name: string;
   description: string;
   price: number;
-  promotionalPrice?: number | null;
   quantityPrices?: Array<{
     id: string;
     from: number;
@@ -89,6 +88,30 @@ export type OrderItem = {
   unitPrice: number;
   quantity: number;
   lineTotal: number;
+  pricingSource?: string;
+};
+
+export type OrderStatusHistory = {
+  id: string;
+  orderId: string;
+  status: OrderStatus;
+  notes: string | null;
+  createdAt: string;
+  changedBy?: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
+};
+
+export type OrderPromotionUsage = {
+  id: string;
+  orderId: string;
+  promotionId: string | null;
+  promotionName: string;
+  quantity: number;
+  promotionalPrice: number;
+  createdAt: string;
 };
 
 export type Order = {
@@ -111,4 +134,6 @@ export type Order = {
   createdAt: string;
   updatedAt: string;
   items: OrderItem[];
+  statusHistory?: OrderStatusHistory[];
+  promotionUsages?: OrderPromotionUsage[];
 };
