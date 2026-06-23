@@ -177,7 +177,7 @@ export function App() {
       section={section}
       user={user}
     >
-      <DashboardSummary products={products} orders={orders} />
+      {/* <DashboardSummary products={products} orders={orders} /> */}
 
       {notice ? <div className={ui.cn(ui.pageNotice, ui.noticeSuccess)}>{notice}</div> : null}
       {error ? <div className={ui.cn(ui.pageNotice, ui.noticeError)}>{error}</div> : null}
@@ -216,7 +216,7 @@ export function App() {
             />
           ) : null}
 
-          {section === "inventory" ? (
+          {/* {section === "inventory" ? (
             <InventoryView
               movementPagination={movementPagination}
               movements={inventoryMovements}
@@ -233,7 +233,7 @@ export function App() {
                 setMovementParams((current) => (current.productId === productId ? current : { ...current, productId, page: 1 }))
               }
             />
-          ) : null}
+          ) : null} */}
 
           {section === "categories" ? (
             <CatalogView
@@ -284,7 +284,7 @@ export function App() {
             />
           ) : null}
         </div>
-        <OperationalRail products={products} orders={orders} onInventory={() => setSection("inventory")} />
+        {/* <OperationalRail products={products} orders={orders} onInventory={() => setSection("inventory")} /> */}
       </div>
     </AdminLayout>
   );

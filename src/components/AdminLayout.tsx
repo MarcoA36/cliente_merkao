@@ -93,9 +93,9 @@ export function AdminLayout({
           <NavButton icon={<BadgePercent />} active={section === "promotions"} onClick={() => selectSection("promotions")}>
             Promociones
           </NavButton>
-          <NavButton icon={<PackagePlus />} active={section === "inventory"} onClick={() => selectSection("inventory")}>
+          {/* <NavButton icon={<PackagePlus />} active={section === "inventory"} onClick={() => selectSection("inventory")}>
             Inventario
-          </NavButton>
+          </NavButton> */}
           <NavButton icon={<Layers3 />} active={section === "categories"} onClick={() => selectSection("categories")}>
             Categorias
           </NavButton>
@@ -147,10 +147,10 @@ export function AdminLayout({
             <button className={ui.secondaryIconButton} aria-label="Actualizar" onClick={onRefresh} disabled={loading}>
               <RefreshCw size={16} />
             </button>
-            <button className={ui.primaryButton} onClick={() => selectSection("products")}>
+            {/* <button className={ui.primaryButton} onClick={() => selectSection("products")}>
               <Plus size={16} />
               Nuevo Producto
-            </button>
+            </button> */}
           </div>
         </section>
 
@@ -179,7 +179,7 @@ export function AdminLayout({
           <BadgePercent size={19} />
           <span>Promos</span>
         </button>
-        <button
+        {/* <button
           className={ui.cn(
             ui.bottomBarButton,
             (section === "inventory" || section === "categories" || section === "brands") && ui.bottomBarButtonActive
@@ -188,7 +188,7 @@ export function AdminLayout({
         >
           <BarChart3 size={19} />
           <span>Gestion</span>
-        </button>
+        </button> */}
       </nav>
     </div>
   );

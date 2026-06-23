@@ -17,7 +17,12 @@ export const brandSubtitle = "mb-0 mt-[2px] text-[11px] font-semibold text-merka
 
 export const buttonBase =
   "inline-flex min-h-9 items-center justify-center gap-2 rounded-merkao px-3 py-2 text-[13px] font-bold transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-[.55]";
-export const primaryButton = cn(buttonBase, "border border-merkao-primary bg-merkao-primary text-white hover:bg-merkao-primaryDark");
+// export const primaryButton = cn(buttonBase, "border border-merkao-primary bg-merkao-primary text-white hover:bg-merkao-primaryDark");
+export const primaryButton = cn(
+  buttonBase, 
+  "border border-merkao-primary bg-merkao-primary text-white hover:bg-merkao-primaryDark",
+  "whitespace-nowrap flex-shrink-0 flex items-center gap-2"
+);
 export const secondaryButton = cn(buttonBase, "border border-merkao-border bg-merkao-surface text-merkao-text hover:bg-merkao-surfaceAlt");
 export const ghostButton = cn(
   buttonBase,
@@ -122,9 +127,10 @@ export const inlineNotice = "rounded-merkao px-3 py-2.5 text-[13px] font-extrabo
 export const noticeSuccess = "bg-merkao-primarySoft text-merkao-primary";
 export const noticeError = "bg-merkao-dangerSoft text-red-700";
 
-export const dashboardGrid =
-  "mx-auto grid w-full max-w-[1440px] grid-cols-[minmax(0,1fr)_320px] gap-3.5 px-6 max-[1180px]:grid-cols-1 max-[860px]:px-3";
-export const dashboardPrimary = "min-w-0";
+export const dashboardGrid = 
+  "mx-auto w-full max-w-[1440px] px-6 max-[860px]:px-3";
+
+export const dashboardPrimary = "w-full";
 export const workArea = "grid gap-3.5";
 export const workAreaSplit = "grid grid-cols-[minmax(0,1fr)_320px] items-start gap-3.5 max-[860px]:grid-cols-1";
 
